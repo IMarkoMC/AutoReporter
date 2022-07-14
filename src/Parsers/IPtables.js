@@ -24,6 +24,7 @@ module.exports = function () {
     let file = new tail.Tail('/var/log/kern.log');
 
     file.on('line', (ln) => {
+        Debug(ln);
         //* If the line doesn't contain DROP ignore it
         if (!ln.includes('DROP')) {
             ln = null
@@ -54,6 +55,8 @@ module.exports = function () {
 
         //* If the IP is already blacklisted ignore it
         if (isBlacklisted(src)) {
+
+            Debug('Got a connection from %s but the ip is already blacklisted', src)
 
             proto = null
             src = null
@@ -104,13 +107,21 @@ module.exports = function () {
         //* This is the first connection from the IP. 
         //* Check if the port that they tried reaching is in the Autoreport list and if the port is in that list send the report to AbuseIPDB and add them to the blacklist
 
-        if (this.config.AutoReport.includes(dpt)) {
+        if (this.config.AutoReport.includes(parseInt(dpt))) {
 
             Warn('The IP %s tried connecting to a protected port (%s). Sending the report', src, dpt);
 
+            this.abuseIPDB.sendReport(src, this.config.AbuseIPDB.Protected_port.replace('{source}', src).replace('{port}', dpt).replace('{proto}', proto));
 
             addToIPSet(src)
 
+            dpt = null
+            src = null
+            spt = null
+            proto = null
+
+            args = null
+            ln = null
             return
         }
 
@@ -130,7 +141,10 @@ module.exports = function () {
             ipMap.forEach((values, ipAddress) => {
                 if (Date.now() - values.firstConnection >= this.config.clearConnections * 1e3) {
                     Debug('Removing %s from the list', ipAddress);
+                    ipMap.delete(ipAddress)
                 }
+                ipAddress = null
+                values = null
             })
         }, 5e3); //* Do this check every 5 seconds
     })
@@ -146,6 +160,9 @@ module.exports = function () {
 
             Info('The ip %s was added successfuly to the blacklist ipset', src)
 
+            err = null
+            stderr = null
+            stdout = null
         });
 
         //* add the IP to the blacklist and append a \n at the end so if someone needs to read it later it's not a mess of ips

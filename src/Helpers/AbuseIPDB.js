@@ -10,21 +10,22 @@ module.exports = class AbuseIPDB {
     sendReport(ipAddress, comment) {
         Debug('Sending report of %s with categories %s and comment %s', ipAddress, this.categories, comment)
         axios.request({
+            method: 'POST',
             url: 'https://api.abuseipdb.com/api/v2/report',
             data: {
                 ip: ipAddress,
-                categories: this.categories,
+                categories: this.categories.join(),
                 comment: comment
             },
             headers: {
                 Key: this.apiKey
             }
-        }).then(res, err => {
+        }).then((res, err) => {
             if (err) {
                 console.log(err);
                 return
             }
-            console.log(res.data);
+            Info('AbuseIPDB response: %s', res.data)
         })
     }
 }

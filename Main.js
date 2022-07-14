@@ -4,6 +4,8 @@ const { readFileSync } = require("fs"),
     AbuseIPDB = require("./src/Helpers/AbuseIPDB"),
     IPtables = require("./src/Parsers/IPtables");
 
+const { default: axios } = require('axios')
+
 class Main {
     constructor() {
         this.config = parse(readFileSync('./Settings.yml', 'utf8'));

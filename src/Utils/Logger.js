@@ -67,8 +67,12 @@ function getFullDate() {
 
 exports.Info = function (line, ...extras) {
 
-    if (extras != null && extras.length > 0) {
-        line.split('%s').forEach((ph, i) => line = (line.replace('%s', extras[i])));
+    if (extras != null) {
+        line.split('%s').forEach((ph, i) => {
+            if (typeof extras[i] == 'object') {
+                line = (line.replace('%s', ConsoleColors.objects(JSON.stringify(extras[i]))))
+            } else line = (line.replace('%s', extras[i]))
+        });
     }
 
     if (line.match(regexp)) {
