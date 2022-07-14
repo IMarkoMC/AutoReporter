@@ -4,12 +4,12 @@ const { readFileSync } = require("fs"),
     AbuseIPDB = require("./src/Helpers/AbuseIPDB"),
     IPtables = require("./src/Parsers/IPtables");
 
-const { default: axios } = require('axios')
-
 class Main {
     constructor() {
         this.config = parse(readFileSync('./Settings.yml', 'utf8'));
         Info('Starting!');
+
+        this.saveMySelf();
 
         setDebug(this.config.Debug)
 
@@ -23,6 +23,32 @@ class Main {
     __init__() {
         //* Start the IPTables parser
         IPtables.call(this);
+    }
+
+    saveMySelf() {
+        process.on('uncaughtException', (ex) => {
+            Error(`uncaughtException: %s`, ex)
+            console.log(ex)
+            writeErr(ex)
+            ex = null
+        })
+
+        process.on('unhandledRejection', (ex) => {
+            Error(`unhandledRejection: %s`, ex)
+            console.log(ex)
+            writeErr(ex)
+            ex = null
+        })
+        
+
+        //* Rename the log when the app exits
+        process.on('SIGINT', () => {
+            renameAndExit()
+        })
+
+        process.on('SIGQUIT', () => {
+            renameAndExit()
+        })
     }
 }
 
