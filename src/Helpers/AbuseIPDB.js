@@ -1,7 +1,7 @@
 const { Info, Debug } = require('../Utils/Logger'),
     { default: axios } = require('axios')
 
-module.exports = new class AbuseIPDB {
+module.exports = class AbuseIPDB {
     constructor(apiKey, categories) {
         this.apiKey = apiKey
         this.categories = categories

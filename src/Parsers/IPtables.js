@@ -78,8 +78,7 @@ module.exports = function () {
         if (ipMap.has(src)) {
 
             ipMap.get(src).ports.push(dpt);
-            Debug('The IP %s tried connecting to the ports: %s', src, blocked.get(src).ports);
-
+            Debug('The IP %s tried connecting to the ports: %s', src, ipMap.get(src).ports);
 
             //! If the ip tried connecting to more ports than the allowed ports in config report it
             if (ipMap.get(src).ports.length >= this.config.portKnockingThreshold) {
