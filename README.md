@@ -72,7 +72,7 @@ With that you're nearly there... A few things left
 
 We need to add a rule to DROP all the traffic incomming from the blacklisted ips. For that we're going to use the set module ``iptables -A INPUT -m set --match-set blacklist src -j DROP``
 
-If you want to log the dropped traffic: ``iptables -I INPUT 2 -m set --match-set blacklist src -j LOG --log-prefix " [BLACKLISTED] "``. This rule **needs to be** before the DROP rule.
+If you want to log the dropped traffic: ``iptables -A INPUT -m set --match-set blacklist src -j LOG --log-prefix " [BLACKLISTED] "``. This rule **needs to be** before the DROP rule.
 
 Check that everything is right (All the chains should be there. and your IP should be in the trusted chain), if everything is fine then you can execute the last command: ``iptables -P INPUT DROP``
 
