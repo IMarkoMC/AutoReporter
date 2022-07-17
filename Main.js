@@ -1,8 +1,9 @@
 const { readFileSync } = require("fs"),
     { parse } = require('yaml'),
-    { Info, Debug, Warn, Error, setDebug } = require('./src/Utils/Logger'),
+    { Info, Debug, Warn, Error, setDebug, renameAndExit, writeErr } = require('./src/Utils/Logger'),
     AbuseIPDB = require("./src/Helpers/AbuseIPDB"),
-    IPtables = require("./src/Parsers/IPtables");
+    IPtables = require("./src/Parsers/IPtables"),
+    PFSense = require("./src/Parsers/PFSense");
 
 class Main {
     constructor() {
@@ -21,8 +22,20 @@ class Main {
 
     /** @private */
     __init__() {
-        //* Start the IPTables parser
-        IPtables.call(this);
+
+        switch (this.config.UseParser) {
+            case 'PFsense':
+                PFSense.call(this)
+                break
+
+            case 'IPTables':
+                //* Start the IPTables parser
+                IPtables.call(this);
+
+            default:
+                Error('The parser %s does not exist!', this.config.UseParser)
+                process.exit(0)
+        }
     }
 
     saveMySelf() {
@@ -39,7 +52,6 @@ class Main {
             writeErr(ex)
             ex = null
         })
-        
 
         //* Rename the log when the app exits
         process.on('SIGINT', () => {

@@ -11,17 +11,16 @@ let ipMap = new Map()
 
 function isBlacklisted(ipAddress) {
     //* If the blacklist file does not exist there's no way that the ip is blacklisted lmfao
-    if (!existsSync('blacklist.txt')) {
+    if (!existsSync(process.cwd() + '/Blacklist.txt')) {
         return false;
     }
 
     //* Check if the blacklist file includes the IP
-    return readFileSync('Blacklist.txt', 'utf-8').includes(ipAddress)
+    return readFileSync(process.cwd() + '/Blacklist.txt', 'utf-8').includes(ipAddress)
 }
-
 module.exports = function () {
 
-    let file = new tail.Tail('/var/log/kern.log');
+    let file = new tail.Tail(this.config.LogFile);
 
     file.on('line', (ln) => {
         Debug(ln);
@@ -88,10 +87,12 @@ module.exports = function () {
 
                 Warn('The IP %s tried connecting to more ports than the allowed. Sending the report', src)
 
-                this.abuseIPDB.sendReport(src, this.config.AbuseIPDB.Protected_port.replace('{source}', src).replace('{port}', dpt).replace('{proto}', proto));
+                this.abuseIPDB.sendReport(src, this.config.AbuseIPDB.Port_Knoking);
 
                 addToIPSet(src);
 
+                //! Delete the ip from the map.
+                ipMap.delete(src)
             }
 
             dpt = null
@@ -136,18 +137,18 @@ module.exports = function () {
 
         args = null
         ln = null
-
-        setInterval(() => {
-            ipMap.forEach((values, ipAddress) => {
-                if (Date.now() - values.firstConnection >= this.config.clearConnections * 1e3) {
-                    Debug('Removing %s from the list', ipAddress);
-                    ipMap.delete(ipAddress)
-                }
-                ipAddress = null
-                values = null
-            })
-        }, 5e3); //* Do this check every 5 seconds
     })
+
+    setInterval(() => {
+        ipMap.forEach((values, ipAddress) => {
+            if (Date.now() - values.firstConnection >= this.config.clearConnections * 1e3) {
+                Debug('Removing %s from the list', ipAddress);
+                ipMap.delete(ipAddress)
+            }
+            ipAddress = null
+            values = null
+        })
+    }, 5e3); //* Do this check every 5 seconds
 
     function addToIPSet(src) {
         //* Call the ipset command
@@ -166,6 +167,6 @@ module.exports = function () {
         });
 
         //* add the IP to the blacklist and append a \n at the end so if someone needs to read it later it's not a mess of ips
-        appendFileSync('Blacklist.txt', src + '\n')
+        appendFileSync(process.cwd() + '/Blacklist.txt', src + '\n')
     }
 }

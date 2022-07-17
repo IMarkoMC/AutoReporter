@@ -188,3 +188,17 @@ exports.writeErr = function (Line) {
 function removeColors(string) {
     return string.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 }
+
+exports.renameAndExit = function () {
+    if (fs.existsSync(join(process.cwd(), 'Logs', 'latest.log'))) {
+        fs.rename(join(process.cwd(), 'Logs', 'latest.log'), join(process.cwd(), 'Logs', `log-${moment(Date.now()).format('d-MM-yy')}-${Date.now()}.log`), (err) => {
+            if (err) {
+                console.log(err);
+            }
+
+            process.exit(0);
+        })
+    } else {
+        process.exit(0)
+    }
+}
