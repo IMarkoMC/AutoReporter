@@ -31,6 +31,7 @@ class Main {
             case 'IPTables':
                 //* Start the IPTables parser
                 IPtables.call(this);
+                break
 
             default:
                 Error('The parser %s does not exist!', this.config.UseParser)
