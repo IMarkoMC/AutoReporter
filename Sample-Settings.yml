@@ -1,0 +1,33 @@
+# After what amount of connection attemps to closed ports do you want to report the IP
+portKnockingThreshold: 10
+
+# Every how many seconds do you want to reset the counters?
+clearConnections: 225
+
+# The ports that you want to report if someone tries conencting
+
+# 22 - SSH. 21 FTP. 23 Telnet. 25 SMTP. 110 POP3. 139 netbios-ssn. 143 IMAP. 445 microsoft-ds. 993 IMAPS. 995 POP3S. 3306 MySQL. 3389 ms-wbt-server. 5900 VNC
+AutoReport: [22, 21, 23, 25, 50, 110, 139, 143, 445, 993, 995, 3306, 3389, 5900]
+
+LogFile: /var/log/kern.log
+
+AbuseIPDB:
+  # Your AbuseIPDB API key
+  Key:
+
+  #What categories do you want to use to report a IP?
+  Categories: [14, 15]
+
+  # The reason for the report when a IP is knocking ports
+  Port_Knoking: Too many connection attempt to closed ports
+
+  # The reason for the report when a IP trying to connect to protected ports
+  Protected_port: Unauthorized connection attempt from {source} to port {port}/{proto}
+
+# You can select IPTables or PFsense
+UseParser: 'IPTables'
+
+# Options for the PFsense parser
+PFSense:
+  WAN_INTERFACE: 'bge0'
+  Network: 10.0.0.1/24
