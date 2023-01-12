@@ -13,7 +13,7 @@ Info('Starting')
 const abuseIPDB = new AbuseIPDB(config.AbuseIPDB.Key, config.AbuseIPDB.Categories)
 
 switch (config.UseParser.toLowerCase()) {
-  case 'iptabkes': {
+  case 'iptables': {
     IPtables(abuseIPDB)
     break
   }
