@@ -31,6 +31,7 @@ iptables -N chain-states
 # iptables -a ovh -p ICMP -s 8.33.137.2      -j ACCEPT
 # iptables -a ovh -p ICMP -s 213.186.33.13   -j ACCEPT
 # iptables -a ovh -p ICMP -s 213.186.50.98   -j ACCEPT
+# iptables -a ovh -p ICMP -j RETURN
 
 #OPTIONALS
 # iptables -a ovh -p ICMP -s <Your server IP>.250   -j ACCEPT
